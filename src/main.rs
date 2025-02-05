@@ -9,7 +9,11 @@ slint::include_modules!();
 
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
+    let mut now = time::get_time();
+    ui.set_time(slint::SharedString::from(now.clone()));
 
+    let price = format!("{:.2}", crypto_price::get_bitcoin_price()?);
+    ui.set_price(slint::SharedString::from(price));
 
     ui.on_request_increase_value({
         let ui_handle = ui.as_weak();
@@ -18,8 +22,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             match crypto_price::get_bitcoin_price() {
                 Ok(price) => {
-                    let now = time::get_time();
-                    ui.set_time(slint::SharedString::from(now).clone());
+                    now = time::get_time();
+                    ui.set_time(slint::SharedString::from(now.clone()));
 
                     let price = format!("{:.2}", price); // Will be return 1.23
                     ui.set_price(slint::SharedString::from(price).clone());
